@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>图片弹出</title>
+    <style>
+        * {
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        #content {
+            position: relative;
+            width: 100vm;
+            height: 100vh;
+            background: teal;
+            overflow: hidden;
+        }
+
+        span {
+            position: absolute;
+            top: 50px;
+            left: 45%;
+            display: block;
+            width: 100px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            color: #fff;
+            font-size: 20px;
+            background: #000;
+            cursor: pointer;
+            opacity: .3;
+        }
+
+        #mask{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index:2;
+            opacity: .3;
+        }
+
+        #appear{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100vw;
+            height: 60vh;
+            background: rgba(255, 60, 53, .7);
+            z-index: 3;
+        }
+
+    </style>
+    <script>
+        window.onload = function () {
+            var content = document.getElementById("content");
+            var click=document.createElement("span");
+            var h=window.innerHeight;
+            click.id="click";
+            click.innerHTML="点击";
+            content.appendChild(click);
+
+            click.addEventListener("click", function () {
+                var mask = document.createElement("div");
+                mask.id = "mask";
+                var appear = document.createElement("div");
+                appear.id = "appear";
+                appear.style.position="absolute";
+                appear.style.bottom="-460px";
+                console.log(appear.style.bottom);
+                var close = document.createElement("span");
+                close.id = "close";
+                close.innerHTML = "关闭";
+
+                //文档碎片
+                var frag = document.createDocumentFragment();
+                appear.appendChild(close);
+                frag.appendChild(appear);
+                frag.appendChild(mask);
+
+                var e = event || window.event;
+                content.appendChild(frag);
+                e.cancelBubble || e.stopPropagation();
+
+                moving(460,0)
+
+            });
+
+            function moving(speed, ter) {
+                var bottom_val = parseInt(appear.style.bottom);
+                if (bottom_val === 0) {
+                    bottom_val = ter;
+                } else {
+                    bottom_val += speed;
+                }
+                appear.style.bottom = bottom_val + "px";
+            }
+
+
+            content.addEventListener("click",function(){
+                hidden();
+            });
+            function hidden(){
+                var e=event||window.event;
+                var target= e.target|| e.srcElement;
+                if(target.id!="appear"){
+                   moving2(-460,0)
+                }
+            }
+
+            function moving2(speed) {
+                var bottom_val = parseInt(appear.style.bottom);
+                bottom_val += speed;
+                appear.style.bottom = bottom_val + "px";
+                content.removeChild(document.getElementById("mask"));
+                content.removeChild(document.getElementById("appear"));
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="content"></div>
+</body>
+</html>
